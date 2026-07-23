@@ -8,7 +8,7 @@ set -e
 
 KEY_FILE="${LOCAL_AUTH_KEY_FILE:-/run/container.env.key}"
 
-if [[ -f $KEY_FILE ]] && ! grep -q '^LOCAL_AUTH_KEY=' "$KEY_FILE" 2>/dev/null; then
+if [[ -f $KEY_FILE ]] && ! grep -q '^LOCAL_AUTH_KEY=.' "$KEY_FILE" 2>/dev/null; then
     printf 'LOCAL_AUTH_KEY=%s\n' "$(openssl rand -hex 32)" > "$KEY_FILE"
 fi
 
@@ -20,6 +20,12 @@ if [[ -f $KEY_FILE ]]; then
     source "$KEY_FILE"
     set +a
 fi
+
+# ── Composer dependencies ─────────────────────────────────────────────────
+# Install PHP dependencies on every container start. Idempotent and fast
+# when composer.lock hasn't changed.
+
+composer install --no-interaction --prefer-dist
 
 # Hand off to the original PHP entrypoint, forwarding any CMD args.
 exec /usr/local/bin/docker-php-entrypoint "$@"

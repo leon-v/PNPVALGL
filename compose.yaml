@@ -18,14 +18,18 @@ services:
       - ./docker/php-fpm/logs:/var/log/php-fpm
       - ./docker/nginx/logs:/var/log/nginx:rw
       - ./docker/php-fpm/entrypoint.sh:/usr/local/bin/php-entrypoint.sh:ro
-      - ./docker/.env.key:/run/container.env.key
+      - ./docker/generated:/run/container.env
     entrypoint: /usr/local/bin/php-entrypoint.sh
     command: php-fpm
     env_file:
-      - docker/.env.template
-      - docker/.env
-      - docker/.env.local
-      - docker/.env.key
+      - path: docker/.env.template
+        required: true
+      - path: docker/.env
+        required: false
+      - path: docker/.env.local
+        required: false
+      - path: docker/generated/.env.key
+        required: false
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,10 +54,14 @@ services:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - ./docker/nginx/logs:/var/log/nginx
     env_file:
-      - docker/.env.template
-      - docker/.env
-      - docker/.env.local
-      - docker/.env.key
+      - path: docker/.env.template
+        required: true
+      - path: docker/.env
+        required: false
+      - path: docker/.env.local
+        required: false
+      - path: docker/generated/.env.key
+        required: false
     depends_on:
       php:
         condition: service_started
@@ -70,10 +78,14 @@ services:
     hostname: postgres
     restart: unless-stopped
     env_file:
-      - docker/.env.template
-      - docker/.env
-      - docker/.env.local
-      - docker/.env.key
+      - path: docker/.env.template
+        required: true
+      - path: docker/.env
+        required: false
+      - path: docker/.env.local
+        required: false
+      - path: docker/generated/.env.key
+        required: false
     volumes:
       - pgdata:/var/lib/postgresql
       - ./docker/postgres/logs:/var/log/postgres
@@ -110,10 +122,14 @@ services:
     hostname: valkey
     restart: unless-stopped
     env_file:
-      - docker/.env.template
-      - docker/.env
-      - docker/.env.local
-      - docker/.env.key
+      - path: docker/.env.template
+        required: true
+      - path: docker/.env
+        required: false
+      - path: docker/.env.local
+        required: false
+      - path: docker/generated/.env.key
+        required: false
     volumes:
       - valkeydata:/data
       - ./docker/valkey/valkey.conf:/usr/local/etc/valkey/valkey.conf:ro

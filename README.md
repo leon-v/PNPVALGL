@@ -50,7 +50,7 @@ Use `docker/.env.local` to override values without touching `.env` — it is loa
 after `.env` and takes precedence. Compose loads them in order: `.env.template`
 (defaults) → `.env` (your values) → `.env.local` (overrides).
 
-A `LOCAL_AUTH_KEY` is auto-generated into `docker/.env.key` on first container
+A `LOCAL_AUTH_KEY` is auto-generated into `docker/generated/.env.key` on first container
 start and persists across rebuilds. It is shared to all services that mount
 that file.
 

@@ -2,13 +2,12 @@
 set -e
 
 # ── Local auth key — generate once, persist across restarts ─────────────────
-# If the shared .env.key file is empty, fill it with a secure random
-# value for LOCAL_AUTH_KEY. The file is bind-mounted so the value
-# survives container rebuilds and is visible to other containers.
+# The key file lives inside the bind-mounted docker/generated/ directory.
+# It persists across container rebuilds and is visible to all services.
 
-KEY_FILE="${LOCAL_AUTH_KEY_FILE:-/run/container.env.key}"
+KEY_FILE="${LOCAL_AUTH_KEY_FILE:-/run/container.env/.env.key}"
 
-if [[ -f $KEY_FILE ]] && ! grep -q '^LOCAL_AUTH_KEY=.' "$KEY_FILE" 2>/dev/null; then
+if [[ ! -f $KEY_FILE ]] || ! grep -q '^LOCAL_AUTH_KEY=.' "$KEY_FILE" 2>/dev/null; then
     printf 'LOCAL_AUTH_KEY=%s\n' "$(openssl rand -hex 32)" > "$KEY_FILE"
 fi
 

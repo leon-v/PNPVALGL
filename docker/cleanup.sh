@@ -26,7 +26,7 @@ for cleanup in docker/*/cleanup.sh; do
 done
 
 echo "=== Clearing shared auth key ==="
-:> docker/.env.key
+:> docker/generated/.env.key
 
 echo "=== Done ==="
 echo "Pulled images are cached. Locally built images removed — will rebuild on next up."

@@ -11,6 +11,6 @@ echo "=== php-fpm: clearing cache ==="
 find ../../app/storage/cache -not -name '.gitkeep' -type f -delete
 
 echo "=== php-fpm: clearing auth key ==="
-:> ../.env.key
+:> ../generated/.env.key
 
 echo "=== php-fpm: done ==="

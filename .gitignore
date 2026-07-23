@@ -1,3 +1,6 @@
+docker/.env
+docker/.env.local
+docker/.env.key
 docker/*/logs/*.log
 docker/*/logs/*.json
 app/vendor

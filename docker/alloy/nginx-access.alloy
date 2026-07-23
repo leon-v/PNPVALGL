@@ -1,0 +1,28 @@
+loki.source.file "nginx_access" {
+    targets = [
+        {
+            __path__     = "/var/log/nginx/access.log",
+            log_source   = "nginx-access",
+            service_name = "nginx",
+        },
+    ]
+    tail_from_end = true
+    forward_to    = [loki.process.nginx_access_level.receiver]
+}
+
+loki.process "nginx_access_level" {
+    stage.json {
+        expressions = {
+            status = "status",
+            level  = "level",
+        }
+    }
+
+    stage.labels {
+        values = {
+            detected_level = "level",
+        }
+    }
+
+    forward_to = [loki.write.default.receiver]
+}

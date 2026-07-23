@@ -1,0 +1,13 @@
+{
+    "name": "leon-v/pnpvalg-tests",
+    "description": "pnpvalg — PHP app with Docker, Loki, and Grafana",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LeonV\\Pnpvalg\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,127 @@
+{
+  "title": "Nginx",
+  "uid": "nginx",
+  "tags": ["nginx", "loki"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Request Rate",
+      "type": "timeseries",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "sum(rate({log_source=\"nginx-access\"} [$__auto]))",
+          "legendFormat": "req/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {"lineWidth": 2, "fillOpacity": 10, "spanNulls": true}
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Status Codes",
+      "type": "timeseries",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "sum by (status) (rate({log_source=\"nginx-access\"} | json [$__auto]))",
+          "legendFormat": "{{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {"lineWidth": 2, "fillOpacity": 10, "spanNulls": true}
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "5xx Error Rate",
+      "type": "stat",
+      "gridPos": {"x": 0, "y": 8, "w": 4, "h": 4},
+      "targets": [
+        {
+          "expr": "sum(rate({log_source=\"nginx-access\"} | json | status =~ `5..` [$__auto])) / sum(rate({log_source=\"nginx-access\"} [$__auto])) * 100"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "percent", "decimals": 2, "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 5}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 4,
+      "title": "4xx Rate",
+      "type": "stat",
+      "gridPos": {"x": 4, "y": 8, "w": 4, "h": 4},
+      "targets": [
+        {
+          "expr": "sum(rate({log_source=\"nginx-access\"} | json | status =~ `4..` [$__auto])) / sum(rate({log_source=\"nginx-access\"} [$__auto])) * 100"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "percent", "decimals": 2, "color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 5}, {"color": "red", "value": 15}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 5,
+      "title": "Avg Body Bytes",
+      "type": "stat",
+      "gridPos": {"x": 8, "y": 8, "w": 4, "h": 4},
+      "targets": [
+        {
+          "expr": "avg(avg_over_time({log_source=\"nginx-access\"} | json | unwrap body_bytes_sent [$__auto]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "bytes", "decimals": 0}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 6,
+      "title": "Top Paths",
+      "type": "table",
+      "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "topk(10, sum by (path) (count_over_time({log_source=\"nginx-access\"} | json | path != \"\" [$__auto])))",
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"custom": {"align": "auto"}},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "path"}, "properties": [{"id": "custom.width", "value": 400}]}
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "title": "Top Referrers",
+      "type": "table",
+      "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+      "targets": [
+        {
+          "expr": "topk(10, sum by (referer) (count_over_time({log_source=\"nginx-access\"} | json | referer != \"-\" | referer != \"\" [$__auto])))",
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"custom": {"align": "auto"}},
+        "overrides": [
+          {"matcher": {"id": "byName", "options": "referer"}, "properties": [{"id": "custom.width", "value": 400}]}
+        ]
+      }
+    }
+  ]
+}

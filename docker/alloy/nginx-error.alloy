@@ -1,0 +1,62 @@
+loki.source.file "nginx_error" {
+    targets = [
+        {
+            __path__     = "/var/log/nginx/error.log",
+            log_source   = "nginx-error",
+            service_name = "nginx",
+        },
+    ]
+    tail_from_end = true
+    file_watch {
+        min_poll_frequency = "100ms"
+        max_poll_frequency = "100ms"
+    }
+    forward_to    = [loki.process.nginx_error.receiver]
+}
+
+loki.process "nginx_error" {
+    // Full structured extraction.
+    // Format: YYYY/MM/DD HH:MM:SS [level] pid#tid: *cid message
+    // The *cid prefix is absent for master-process messages.
+    stage.regex {
+        expression = `^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) \[(?P<nginx_level>\w+)\] (?P<pid>\d+)#(?P<tid>\d+): (?:\*(?P<cid>\d+) )?(?P<message>.*)$`
+    }
+
+    // Re-capture the raw level under "level" so the template stage
+    // can read it.  nginx_level survives untouched for the label.
+    stage.regex {
+        expression = `^.*\[(?P<level>\w+)\].*`
+    }
+
+    // Map nginx severity to canonical detected_level.
+    stage.template {
+        source   = "level"
+        template = `{{ if eq .Value "emerg" -}}  critical
+                     {{- else if eq .Value "alert" -}}  critical
+                     {{- else if eq .Value "crit" -}}  critical
+                     {{- else if eq .Value "error" -}}  error
+                     {{- else if eq .Value "warn" -}}  warn
+                     {{- else if eq .Value "notice" -}}  info
+                     {{- else if eq .Value "info" -}}  info
+                     {{- else if eq .Value "debug" -}}  debug
+                     {{- else -}}  info
+                     {{- end }}`
+    }
+
+    // Use the nginx timestamp as the Loki log timestamp.
+    stage.timestamp {
+        source = "timestamp"
+        format = "2006/01/02 15:04:05"
+        location = "UTC"
+        action_on_failure = "fudge"
+    }
+
+    stage.labels {
+        values = {
+            detected_level = "level",
+            nginx_level    = "nginx_level",
+        }
+    }
+
+    forward_to = [loki.write.default.receiver]
+}

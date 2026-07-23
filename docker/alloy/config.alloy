@@ -1,0 +1,15 @@
+// Alloy config — shared loki.write endpoint.
+// Component definitions are split across nginx.alloy, php-fpm.alloy,
+// and postgres.alloy. Alloy loads every .alloy file from this directory.
+//
+// LokiLogger.php (auto_prepend_file) handles per-request PHP
+// errors/exceptions/syslog and pushes directly to Loki — it does
+// not pass through Alloy.
+
+loki.write "default" {
+    endpoint {
+        url        = "http://loki:3100/loki/api/v1/push"
+        batch_wait = "50ms"
+        batch_size = "1B"
+    }
+}

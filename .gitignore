@@ -1,0 +1,10 @@
+docker/.env
+docker/.env.local
+docker/.env.key
+docker/*/logs/*.log
+docker/*/logs/*.json
+app/vendor
+app/storage/*
+app/storage/cache/*
+!app/storage/cache/
+!app/storage/cache/.gitkeep

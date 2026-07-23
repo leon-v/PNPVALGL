@@ -1,0 +1,57 @@
+loki.source.file "postgres" {
+    targets = [
+        {
+            __path__     = "/var/log/postgres/*.json",
+            log_source   = "postgres",
+            service_name = "postgres",
+        },
+    ]
+    tail_from_end = true
+    forward_to    = [loki.process.postgres.receiver]
+    file_match {
+        enabled = true
+    }
+}
+
+loki.process "postgres" {
+    stage.json {
+        expressions = {
+            timestamp      = "timestamp",
+            pg_severity    = "error_severity",
+            detected_level = "error_severity",
+        }
+    }
+
+    stage.template {
+        source   = "detected_level"
+        template = `{{ if eq .Value "FATAL" -}}  critical
+                     {{- else if eq .Value "PANIC" -}}  critical
+                     {{- else if eq .Value "ERROR" -}}  error
+                     {{- else if eq .Value "WARNING" -}}  warn
+                     {{- else if eq .Value "NOTICE" -}}  info
+                     {{- else if eq .Value "INFO" -}}  info
+                     {{- else if eq .Value "DEBUG" -}}  debug
+                     {{- else if eq .Value "DEBUG1" -}}  debug
+                     {{- else if eq .Value "DEBUG2" -}}  debug
+                     {{- else if eq .Value "DEBUG3" -}}  debug
+                     {{- else if eq .Value "DEBUG4" -}}  debug
+                     {{- else if eq .Value "DEBUG5" -}}  debug
+                     {{- else -}}  info
+                     {{- end }}`
+    }
+
+    stage.timestamp {
+        source = "timestamp"
+        format = "2006-01-02 15:04:05.000 MST"
+        action_on_failure = "fudge"
+    }
+
+    stage.labels {
+        values = {
+            pg_severity    = "",
+            detected_level = "",
+        }
+    }
+
+    forward_to = [loki.write.default.receiver]
+}

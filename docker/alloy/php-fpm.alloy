@@ -1,0 +1,11 @@
+loki.source.file "php_fpm" {
+    targets = [
+        {
+            __path__     = "/var/log/php-fpm/error.log",
+            log_source   = "php-fpm-daemon",
+            service_name = "php",
+        },
+    ]
+    tail_from_end = true
+    forward_to    = [loki.write.default.receiver]
+}

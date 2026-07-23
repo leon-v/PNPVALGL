@@ -1,0 +1,116 @@
+{
+  "title": "PHP",
+  "uid": "php",
+  "tags": ["php", "loki"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "PHP Error Rate",
+      "type": "timeseries",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 7},
+      "targets": [
+        {
+          "expr": "sum by (severity_text) (rate({log_source=\"app-syslog\"} | json | type =~ \"error|exception|fatal\" [$__auto]))",
+          "legendFormat": "{{severity_text}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {"lineWidth": 2, "fillOpacity": 10, "spanNulls": true}
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Syslog Volume by Severity",
+      "type": "timeseries",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 7},
+      "targets": [
+        {
+          "expr": "sum by (severity_text) (count_over_time({log_source=\"app-syslog\"} | json [$__auto]))",
+          "legendFormat": "{{severity_text}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {"lineWidth": 2, "fillOpacity": 15, "spanNulls": true, "stacking": {"mode": "normal"}}
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Error Count (last 5m)",
+      "type": "stat",
+      "gridPos": {"x": 0, "y": 7, "w": 4, "h": 3},
+      "targets": [
+        {
+          "expr": "sum(count_over_time({log_source=\"app-syslog\"} | json | type =~ \"error|exception|fatal\" [$__range]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 10}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 4,
+      "title": "Syslog Messages (last 5m)",
+      "type": "stat",
+      "gridPos": {"x": 4, "y": 7, "w": 4, "h": 3},
+      "targets": [
+        {
+          "expr": "sum(count_over_time({log_source=\"app-syslog\"} | json [$__range]))"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"color": "blue", "value": null}]}}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 5,
+      "title": "Top Facilities",
+      "type": "piechart",
+      "gridPos": {"x": 8, "y": 7, "w": 4, "h": 3},
+      "targets": [
+        {
+          "expr": "sum by (facility_text) (count_over_time({log_source=\"app-syslog\"} | json [$__range]))",
+          "legendFormat": "{{facility_text}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {"unit": "short"}
+      },
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"]}}
+    },
+    {
+      "id": 6,
+      "title": "PHP Error Log",
+      "type": "logs",
+      "gridPos": {"x": 0, "y": 10, "w": 12, "h": 10},
+      "targets": [
+        {
+          "expr": "{log_source=\"app-syslog\"} | json | type =~ \"error|exception|fatal\""
+        }
+      ],
+      "options": {"showTime": true, "showLabels": false, "wrapLogMessage": true}
+    },
+    {
+      "id": 7,
+      "title": "Syslog",
+      "type": "logs",
+      "gridPos": {"x": 12, "y": 10, "w": 12, "h": 10},
+      "targets": [
+        {
+          "expr": "{log_source=\"app-syslog\"}"
+        }
+      ],
+      "options": {"showTime": true, "showLabels": true, "wrapLogMessage": true}
+    }
+  ]
+}

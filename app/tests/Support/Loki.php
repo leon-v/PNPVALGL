@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LeonV\Pnpvalg\Tests\Support;
+namespace LeonV\PnpvalgL\Tests\Support;
 
 /**
  * Static Loki query_range polling helpers for Alloy end-to-end tests.

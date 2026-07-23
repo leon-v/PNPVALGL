@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LeonV\Pnpvalg\Tests\Support;
+namespace LeonV\PnpvalgL\Tests\Support;
 
 /**
  * Minimal HTTP client for end-to-end test requests.

@@ -4,13 +4,13 @@ set -euo pipefail
 # ── rename.sh — case-preserving project rename ─────────────────────────────
 # Usage: ./docker/rename.sh NEW_NAME
 #
-# Replaces all case variants of the baked-in OLD name (PNPVALG) with the
+# Replaces all case variants of the baked-in OLD name (PNPVALGL) with the
 # corresponding case variants of NEW across the project. Skips vendor/,
 # .git/, logs/, gitignored files, and binary files.
 
 cd "$(dirname "$0")/.."
 
-OLD="PNPVALG"
+OLD="PNPVALGL"
 NEW="${1:?Usage: $0 NEW_NAME}"
 
 # Validate that NEW is a valid PHP namespace segment: PascalCase, alphanumeric only.
@@ -18,8 +18,8 @@ if [[ $NEW =~ ^[0-9] ]]; then
     echo "Error: NEW_NAME must start with a letter, got '$NEW'" >&2
     exit 1
 fi
-if [[ ! $NEW =~ ^[A-Z][a-zA-Z0-9]+$ ]]; then
-    echo "Error: NEW_NAME must be PascalCase alphanumeric (e.g. MyProject), got '$NEW'" >&2
+if [[ ! $NEW =~ ^[A-Z][a-zA-Z0-9_]+$ ]]; then
+    echo "Error: NEW_NAME must start with a letter and contain only alphanumeric characters or underscores, got '$NEW'" >&2
     exit 1
 fi
 

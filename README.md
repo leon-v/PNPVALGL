@@ -1,4 +1,4 @@
-# PNPVALG — PHP Web Stack Template
+# PNPVALGL — PHP Web Stack Template
 
 Docker Compose stack for PHP 8.5 and Postgres with Grafana for observability.
 Drops into any PHP project and gives you a running dev environment with structured logging, metrics-ready dashboards, and sensible development defaults.
@@ -56,7 +56,7 @@ that file.
 
 ## Renaming the project
 
-`docker/rename.sh` renames the project from `PNPVALG` to a name of your choice in
+`docker/rename.sh` renames the project from `PNPVALGL` to a name of your choice in
 every file under version control. It handles all three case variants —
 UPPERCASE, lowercase, and Titlecase — so references in code, config, docs, and
 env files stay consistent. Skips `vendor/`, `.git/`, `docker/*/logs/`, the

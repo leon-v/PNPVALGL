@@ -15,10 +15,10 @@
 
 declare(strict_types=1);
 
-namespace LeonV\Pnpvalg\Tests;
+namespace LeonV\PnpvalgL\Tests;
 
 use PHPUnit\Framework\TestCase;
-use LeonV\Pnpvalg\Tests\Support\Loki;
+use LeonV\PnpvalgL\Tests\Support\Loki;
 
 final class TestAlloyPostgres extends TestCase
 {

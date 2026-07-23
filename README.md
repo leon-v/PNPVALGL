@@ -1,7 +1,7 @@
-# PNPVALGL — PHP Web Stack Template
+# PNPVALGL — Laravel Web Stack Template
 
-Docker Compose stack for PHP 8.5 and Postgres with Grafana for observability.
-Drops into any PHP project and gives you a running dev environment with structured logging, metrics-ready dashboards, and sensible development defaults.
+Docker Compose stack for Laravel 13.x, PHP 8.5, and Postgres with Grafana for observability.
+Ships with a fresh Laravel skeleton and gives you a running dev environment with structured logging, metrics-ready dashboards, and sensible development defaults.
 
 ## Services
 
@@ -29,11 +29,11 @@ docker compose up -d
 
 ## What's inside
 
-PHP 8.5 FPM with pdo_pgsql, pgsql, redis, xdebug, uopz, and Composer.
-Xdebug is in trigger mode (set `XDEBUG_TRIGGER` to activate), not always-on.
-Nginx reverse proxy. PostgreSQL 18 with `pg_stat_statements` (query profiling)
-and `pg_trgm` (fuzzy text search) extensions enabled.
-Valkey (Redis-compatible).
+Laravel 13.x skeleton. PHP 8.5 FPM with pdo_pgsql, pgsql, redis, xdebug,
+uopz, and Composer. Xdebug is in trigger mode (set `XDEBUG_TRIGGER` to
+activate), not always-on. Nginx reverse proxy. PostgreSQL 18 with
+`pg_stat_statements` (query profiling) and `pg_trgm` (fuzzy text search)
+extensions enabled. Valkey (Redis-compatible).
 
 Logging path: PHP errors, exceptions, and `syslog()` calls are intercepted by
 LokiLogger via `auto_prepend_file` and pushed directly to Loki's HTTP API —
